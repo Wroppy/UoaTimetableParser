@@ -18,7 +18,8 @@ class TimetableToJson:
         filtered_soup = self.filter_timetable_html(soup)
         print(filtered_soup.prettify())
 
-        self.write_html(filtered_soup, "data/timetable_filtered.html")
+        # self.write_html(filtered_soup, "data/timetable_filtered.html")
+        print(self.get_course_names(filtered_soup))
 
     def parse_html(self, filename: str) -> BeautifulSoup:
         """
@@ -54,3 +55,39 @@ class TimetableToJson:
         """
         with open(filename, 'w') as f:
             f.write(soup.prettify())
+
+
+    def get_course_names(self, soup: BeautifulSoup) -> list[dict]:
+        """
+        Get the course names from the timetable html
+
+        :param soup: BeautifulSoup object
+        :return: list of course names and codes in the form of [{name, code}]
+        """
+
+        selector = "h2.ps_header-group > a.ps-link"
+        # Finds all the course names
+        course_names = soup.select(selector)
+
+        course_list = []
+        for course in course_names:
+            # text may contain newlines, and double spaces between words
+            course_text = course.text.strip().replace("\n", "")
+            course_text = " ".join(course_text.split()) # remove double spaces
+
+
+            # get course code
+            course_code = course_text.split(" ")[:2]
+            course_code = " ".join(course_code)
+
+            # Get course name
+            course_name = course_text.split(" ")[2:]
+            course_name = " ".join(course_name)
+
+            course_list.append({"name": course_name, "code": course_code})
+
+        return course_list
+
+
+
+
