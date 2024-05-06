@@ -19,7 +19,16 @@ class TimetableToJson:
         soup = self.parse_html(filename)
         filtered_soup = self.filter_timetable_html(soup)
 
-        self.get_course_classes(filtered_soup)
+        classes = self.get_course_classes(filtered_soup)
+
+        courses_data = []
+
+        for course_names, course_classes in zip(self.get_course_names(filtered_soup), classes):
+            course_data = {"name": course_names["name"], "code": course_names["code"], "classes": course_classes}
+            courses_data.append(course_data)
+
+        return courses_data
+
 
     def parse_html(self, filename: str) -> BeautifulSoup:
         """
@@ -88,7 +97,7 @@ class TimetableToJson:
 
     def get_course_classes(self, soup: BeautifulSoup) -> list[dict]:
         """
-        Get the classes from the timetable html with
+        Get the classes from the timetable html with the course name, code and class type, days, times, and location
 
         :param soup: BeautifulSoup object
         :return: list of classes in the form of [{course, class}]
@@ -97,9 +106,11 @@ class TimetableToJson:
         selector = "div.ps_box-grid-flex.psc_grid-nohbar.psc_grid-norowcount.psc_show-actionable.psc_grid-selectedhighlight.psa_border-bottom-none2.psc_grid-notitle table"
         # Finds all the classes
         courses = soup.select(selector)
+        classes_list = []
 
-        class_list = []
         for courses in courses:
+            course_data = []
+
             classes = courses.find_all("tr")
 
             # Classes elements are tables with class type, days, times, and location
@@ -118,7 +129,11 @@ class TimetableToJson:
 
                 locations = self.format_location_string(class_data[4])
 
-                print(locations)
+                course_data.append({"type": class_type, "times": times, "locations": locations})
+
+            classes_list.append(course_data)
+
+        return classes_list
 
     def format_string(self, string: str) -> str:
         """
@@ -184,6 +199,5 @@ class TimetableToJson:
             location_name = " ".join(location.split(" ")[1:])
 
             formatted_locations.append({"code": location_code, "name": location_name})
-
 
         return formatted_locations
