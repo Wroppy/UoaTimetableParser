@@ -10,6 +10,21 @@ from datetime import date as Date
 
 
 class TimetableToJson:
+    months = {
+        "january": 1,
+        "february": 2,
+        "march": 3,
+        "april": 4,
+        "may": 5,
+        "june": 6,
+        "july": 7,
+        "august": 8,
+        "september": 9,
+        "october": 10,
+        "november": 11,
+        "december": 12
+    }
+
     def __init__(self):
         pass
 
@@ -48,7 +63,82 @@ class TimetableToJson:
             if event_date.lower() in ["tbc", "tba"]:
                 continue
 
+            # If the event is the end of the semester, stop parsing the rows
+            if self.is_semester_over(event_name):
+                break
+
             # Begins parsing the rows
+            started = True
+
+            event = self.parse_row(event_name, event_date)
+            timetable.append(event)
+
+        return timetable
+
+    def is_semester_over(self, event_name: str) -> bool:
+        return event_name.lower().startswith("semester") and event_name.endswith("ends")
+
+    def parse_row(self, event_name: str, event_date: str) -> dict:
+        """
+        Parses the row of the timetable
+
+        :param event_name: The name of the event
+        :param event_date: The date of the event
+        :return: JSON object of the row
+        """
+        event_type = "single_day"
+
+        ending_date = None
+
+        # Checks if the event date spans multiple days
+        #  – is a special character that is not a normal hyphen
+        if " – " in event_date:
+            event_type = "multi_day"
+
+            # Gets the starting and ending date of the event
+            [start_date, end_date] = event_date.split(" – ")
+
+            ending_date = self.parse_general_date(end_date)
+
+            # If the starting date doesn't have a month, it is assumed to be the same month as the ending date
+            if len(start_date.split(" ")) == 2:
+                start_date = f"{start_date} {end_date.split(" ")[2]}"
+
+
+            # Start date does not have a year, so it is assumed to be the same year as the ending date
+            starting_date = self.parse_general_date(f"{start_date} {str(ending_date.year)}")
+        else:
+            starting_date = self.parse_general_date(event_date)
+
+
+        event = {
+            "event_name": event_name,
+            "event_date": {
+                "starting_date": starting_date,
+                "ending_date": ending_date
+            },
+            "event_type": event_type
+        }
+
+        return event
+
+    def parse_general_date(self, str_date: str) -> Date:
+        """
+        Parses the date of the event to a Date object
+
+        :param str_date: full_day DD full_month YYYY
+        :return: Date object of the starting date
+        """
+
+        # Splits the date into its components
+        # print(str_date)
+        # [_, day_number, month, year] = str_date.split(" ")
+        [_, day_number, month, year] = str_date.split(" ")
+
+        # Converts the month to a number
+        month = self.months[month.lower()]
+
+        return Date(int(year), month, int(day_number))
 
     def is_start_date(self, event_name: str) -> bool:
         return event_name.lower().startswith("semester") and event_name.endswith("begins")
@@ -86,3 +176,12 @@ class TimetableToJson:
         """
         # Removes any whitespace from the name
         return " ".join(cell.get_text().strip().split())
+
+    def pretty_print(self, timetable: dict):
+        """
+        Pretty prints the timetable
+
+        :param timetable: The timetable to print
+        """
+        for event in timetable:
+            print(event)
