@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 
 class TimetableToJson:
     parent_div_id = "win0divSSR_SBJCT_LVL1$0"
+    days = {"Mo": "Monday", "Tu": "Tuesday", "We": "Wednesday", "Th": "Thursday", "Fr": "Friday", "Sa": "Saturday",
+            "Su": "Sunday"}
 
     def __init__(self):
         pass
@@ -16,10 +18,8 @@ class TimetableToJson:
         """
         soup = self.parse_html(filename)
         filtered_soup = self.filter_timetable_html(soup)
-        print(filtered_soup.prettify())
 
-        # self.write_html(filtered_soup, "data/timetable_filtered.html")
-        print(self.get_course_names(filtered_soup))
+        self.get_course_classes(filtered_soup)
 
     def parse_html(self, filename: str) -> BeautifulSoup:
         """
@@ -56,7 +56,6 @@ class TimetableToJson:
         with open(filename, 'w') as f:
             f.write(soup.prettify())
 
-
     def get_course_names(self, soup: BeautifulSoup) -> list[dict]:
         """
         Get the course names from the timetable html
@@ -73,8 +72,7 @@ class TimetableToJson:
         for course in course_names:
             # text may contain newlines, and double spaces between words
             course_text = course.text.strip().replace("\n", "")
-            course_text = " ".join(course_text.split()) # remove double spaces
-
+            course_text = " ".join(course_text.split())  # remove double spaces
 
             # get course code
             course_code = course_text.split(" ")[:2]
@@ -88,6 +86,71 @@ class TimetableToJson:
 
         return course_list
 
+    def get_course_classes(self, soup: BeautifulSoup) -> list[dict]:
+        """
+        Get the classes from the timetable html with
 
+        :param soup: BeautifulSoup object
+        :return: list of classes in the form of [{course, class}]
+        """
 
+        selector = "div.ps_box-grid-flex.psc_grid-nohbar.psc_grid-norowcount.psc_show-actionable.psc_grid-selectedhighlight.psa_border-bottom-none2.psc_grid-notitle table"
+        # Finds all the classes
+        courses = soup.select(selector)
 
+        class_list = []
+        for courses in courses:
+            classes = courses.find_all("tr")
+
+            # Classes elements are tables with class type, days, times, and location
+            for class_ in classes:
+                class_data = class_.find_all("td")
+
+                # Checks for empty class data
+                if not class_data:
+                    continue
+
+                class_data = [self.format_string(data.text) for data in class_data]
+
+                class_type = class_data[1]
+
+                times = self.format_time_string(class_data[3])
+                print(times)
+
+    def format_string(self, string: str) -> str:
+        """
+        Format the string by removing newlines and extra spaces
+
+        :param string: string to format
+        :return: formatted string
+        """
+        return " ".join(string.split())
+
+    def format_time_string(self, string: str) -> list[str]:
+        """
+        Formats the time string to a list of start and end times
+
+        :param string: time string of all class times in the form of "dd HH:MM - HH:MM"
+        :return: list of start and end times
+        """
+        times = []
+
+        # Remove the "More schedule details available" string
+        string = string.replace("More schedule details available", "").replace("\n", "").strip()
+
+        # Splits the time strings into its separate times every 16 characters
+        n = 16
+        unformatted_times = [(string[i:i + n]) for i in range(0, len(string), n)]
+
+        for time in unformatted_times:
+            day = self.days[time[:2]]
+            time = time[3:]
+
+            # Split the time string into start and end times
+            time = time.split("-")
+            start_time = time[0].strip()
+            end_time = time[1].strip()
+
+            times.append({"day": day, "start": start_time, "end": end_time})
+
+        return times
