@@ -115,7 +115,10 @@ class TimetableToJson:
                 class_type = class_data[1]
 
                 times = self.format_time_string(class_data[3])
-                print(times)
+
+                locations = self.format_location_string(class_data[4])
+
+                print(locations)
 
     def format_string(self, string: str) -> str:
         """
@@ -154,3 +157,33 @@ class TimetableToJson:
             times.append({"day": day, "start": start_time, "end": end_time})
 
         return times
+
+    def format_location_string(self, string: str) -> list[str]:
+        """
+        Format the location string to remove extra spaces
+
+        :param string: location string
+        :return: formatted location strings in a list
+        """
+
+        locations = string.split(")")
+
+        formatted_locations = []
+
+        for location in locations:
+
+            # Checks for empty location data
+            if not location:
+                continue
+
+            location = location.strip()
+
+            location = location.replace("(", "").strip()
+
+            location_code = location.split(" ")[0]
+            location_name = " ".join(location.split(" ")[1:])
+
+            formatted_locations.append({"code": location_code, "name": location_name})
+
+
+        return formatted_locations
