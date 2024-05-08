@@ -38,7 +38,16 @@ class SetTimeTableDetailsWidget(QWidget):
     def update_widget(self, timetable: dict):
 
         for course in timetable:
-            self.classStack.addWidget(GetCourseDetailsWidget(course))
+            course_widget = GetCourseDetailsWidget(course)
+
+            # Scroll area so the checkboxes don't take up the whole screen
+            scroll_area = QScrollArea()
+            scroll_area.setWidget(course_widget)
+            scroll_area.setWidgetResizable(True)
+            scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+            scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+            self.classStack.addWidget(scroll_area)
 
     def parse_timetable(self, file_path: str):
         """
