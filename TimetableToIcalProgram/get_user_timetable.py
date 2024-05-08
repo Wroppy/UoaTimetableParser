@@ -11,10 +11,11 @@ class GetUserTimetable(QWidget):
 
     """
 
-    parse_timetable = pyqtSignal(BeautifulSoup)  # Argument is the timetable HTML
+    parse_timetable = pyqtSignal(str)  # Argument is the timetable html file path
 
     def __init__(self):
         super().__init__()
+        self.file_path = ""
 
         self.create_widgets()
 
@@ -64,11 +65,10 @@ class GetUserTimetable(QWidget):
         timetable = self.preview_html_text_edit.toPlainText()
         print(timetable)
 
-        if not timetable:
+        if not timetable or not self.file_path:
             return
 
-        soup = BeautifulSoup(timetable, 'html.parser')
-        self.parse_timetable.emit(soup)
+        self.parse_timetable.emit(self.file_path)
 
     def browse_file(self):
         """
@@ -89,6 +89,7 @@ class GetUserTimetable(QWidget):
         """
 
         self.set_timetable_preview(file_path)
+        self.file_path = file_path
 
     def set_timetable_preview(self, file_path: str):
         """
