@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+from bs4 import BeautifulSoup
 
 
 class GetUserTimetable(QWidget):
@@ -23,11 +24,11 @@ class GetUserTimetable(QWidget):
         self.file_path_widget = self.get_file_path_widget()
         layout.addWidget(self.file_path_widget)
 
-        self.preview_html = QTextEdit()
-        self.preview_html.setReadOnly(True)
-        self.preview_html.setPlaceholderText("Preview of timetable")
-        self.preview_html.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        layout.addWidget(self.preview_html)
+        self.preview_html_text_edit = QTextEdit()
+        self.preview_html_text_edit.setReadOnly(True)
+        self.preview_html_text_edit.setPlaceholderText("Preview of timetable")
+        self.preview_html_text_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        layout.addWidget(self.preview_html_text_edit)
 
     def get_file_path_widget(self) -> QWidget:
         """
@@ -65,6 +66,25 @@ class GetUserTimetable(QWidget):
         """
 
         print(file_path)
+        self.set_timetable_preview(file_path)
+
+    def set_timetable_preview(self, file_path: str):
+        """
+        Sets the preview text edit to display the timetable HTML.
+
+        :param file_path: str
+        :return: None
+        """
+
+        timetable = self.get_timetable_html(file_path)
+
+        # Formats the HTML
+        soup = BeautifulSoup(timetable, 'html.parser')
+        timetable = soup.prettify()
+
+        self.preview_html_text_edit.setText(timetable)
+
+
 
     def get_timetable_html(self, filename: str) -> str:
         """
