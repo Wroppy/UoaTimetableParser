@@ -6,9 +6,12 @@ from bs4 import BeautifulSoup
 
 class GetUserTimetable(QWidget):
     """
-    This widget handles
+    This widget handles getting the user's timetable file and displaying a preview of it.
+    Will emit a signal when the user has selected a timetable file.
 
     """
+
+    parse_timetable = pyqtSignal(BeautifulSoup)  # Argument is the timetable HTML
 
     def __init__(self):
         super().__init__()
@@ -30,6 +33,10 @@ class GetUserTimetable(QWidget):
         self.preview_html_text_edit.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         layout.addWidget(self.preview_html_text_edit)
 
+        self.parse_html_button = QPushButton("Parse Timetable")
+        self.parse_html_button.clicked.connect(self.parse_html)
+        layout.addWidget(self.parse_html_button)
+
     def get_file_path_widget(self) -> QWidget:
         """
         Returns a widget that allows the user to select a file path to their timetable.
@@ -46,6 +53,22 @@ class GetUserTimetable(QWidget):
         layout.addWidget(browse_button)
 
         return widget
+
+    def parse_html(self):
+        """
+        Emits the parse_timetable signal with the path to the timetable HTML file.
+
+        :return: None
+        """
+
+        timetable = self.preview_html_text_edit.toPlainText()
+        print(timetable)
+
+        if not timetable:
+            return
+
+        soup = BeautifulSoup(timetable, 'html.parser')
+        self.parse_timetable.emit(soup)
 
     def browse_file(self):
         """
@@ -65,7 +88,6 @@ class GetUserTimetable(QWidget):
         :param file_path: str
         """
 
-        print(file_path)
         self.set_timetable_preview(file_path)
 
     def set_timetable_preview(self, file_path: str):
@@ -82,9 +104,7 @@ class GetUserTimetable(QWidget):
         soup = BeautifulSoup(timetable, 'html.parser')
         timetable = soup.prettify()
 
-        self.preview_html_text_edit.setText(timetable)
-
-
+        self.preview_html_text_edit.setPlainText(timetable)
 
     def get_timetable_html(self, filename: str) -> str:
         """
