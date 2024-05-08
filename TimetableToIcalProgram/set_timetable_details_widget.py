@@ -1,6 +1,8 @@
 from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
+
+from TimetableToIcalProgram.get_course_details_widget import GetCourseDetailsWidget
 from TimetableToJson import TimetableToJson
 
 
@@ -33,8 +35,10 @@ class SetTimeTableDetailsWidget(QWidget):
 
         layout.addWidget(self.next_button)
 
-    def update_widget(self):
-        pass
+    def update_widget(self, timetable: dict):
+
+        for course in timetable:
+            self.classStack.addWidget(GetCourseDetailsWidget(course))
 
     def parse_timetable(self, file_path: str):
         """
@@ -48,9 +52,7 @@ class SetTimeTableDetailsWidget(QWidget):
         timetable = parser.timetable_html_to_json(file_path)
         self.enable_button()
 
-        for course in timetable:
-            name = course["name"]
-            self.classStack.addWidget(QLabel(name))
+        self.update_widget(timetable)
 
     def go_to_next_class(self):
         """
