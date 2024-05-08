@@ -1,17 +1,8 @@
-from PySide6.QtWidgets import *
-from PySide6.QtCore import *
-from PySide6.QtGui import *
+from PyQt6.QtWidgets import *
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
 
-
-class TimetableFormatter(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.set_widgets()
-
-    def set_widgets(self):
-        layout = QVBoxLayout(self)
-
-        layout.addWidget(QLabel("Timetable Formatter"))
+from TimetableToIcalProgram.timetable_formatter_widget import TimetableFormatter
 
 
 class TimetableFormatterWindow(QMainWindow):

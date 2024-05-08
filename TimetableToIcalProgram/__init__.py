@@ -1,1 +1,0 @@
-from TimetableToIcalProgram.timetable_formatter_window import TimetableFormatterWindow
