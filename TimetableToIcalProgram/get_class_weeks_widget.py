@@ -33,15 +33,32 @@ class GetClassWeeksWidget(QWidget):
         layout.addLayout(self.weeks_layout)
 
     def select_all_weeks(self, state):
+        """
+        Change all the week's checkboxes to the state of the select all checkbox
+
+        :param state:
+        :return:
+        """
         for checkbox in self.checkboxes:
             checkbox.setChecked(state)
 
     def update_select_all_checkbox(self):
+        """
+        Update the select all checkbox based on the state of the other checkboxes
+
+        :return:
+        """
         all_checked = all(checkbox.isChecked() for checkbox in self.checkboxes)
         select_all_checkbox = self.weeks_layout.itemAt(0).widget()
         select_all_checkbox.setChecked(all_checked)
 
     def get_week_widget(self, week: int):
+        """
+        Get a widget with a checkbox for the week
+
+        :param week: week number
+        :return:
+        """
         week_widget = QWidget()
         layout = QHBoxLayout(week_widget)
 
