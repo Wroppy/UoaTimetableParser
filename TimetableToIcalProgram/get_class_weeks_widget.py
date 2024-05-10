@@ -18,6 +18,9 @@ class GetClassWeeksWidget(QWidget):
 
         self.weeks_layout = QVBoxLayout()
 
+        select_week_label = QLabel("Select week when the class is on")
+        layout.addWidget(select_week_label)
+
         # Select all checkbox
         select_all_checkbox = QCheckBox("Select all")
         select_all_checkbox.setChecked(True)
@@ -26,7 +29,6 @@ class GetClassWeeksWidget(QWidget):
         select_all_checkbox.clicked.connect(lambda state: self.select_all_weeks(state))
 
         # Adds a checkbox for each week
-
         for week in range(1, 13):
             self.weeks_layout.addWidget(self.get_week_widget(week))
 
