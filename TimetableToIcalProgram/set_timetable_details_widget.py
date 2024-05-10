@@ -89,13 +89,18 @@ class SetTimeTableDetailsWidget(QWidget):
         else:
             self.timetable_configured.emit(self.get_timetable_details())
 
-    def get_timetable_details(self) -> dict:
+    def get_timetable_details(self) -> list:
+        """
+        Get the timetable details from the widgets
 
+        :return: list of lectures
+        """
+        lectures = []
         for course_widget in self.course_widgets:
-            course_widget.get_lectures()
+            course_lectures = course_widget.get_lectures()
+            lectures.extend(course_lectures)
 
-
-        return []
+        return lectures
 
     def clear_stack(self):
         """

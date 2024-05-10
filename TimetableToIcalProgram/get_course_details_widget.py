@@ -5,6 +5,8 @@ from PyQt6.QtGui import *
 from TimetableToIcalProgram.get_lecture_weeks_widget import GetLectureWeeksWidget
 from TimetableToIcalProgram.select_lecture_room_widget import SelectLectureRoomWidget
 
+from TimetableToIcalProgram.Lecture import Lecture
+
 
 class GetCourseDetailsWidget(QWidget):
 
@@ -46,7 +48,7 @@ class GetCourseDetailsWidget(QWidget):
         times = lecture["times"]
 
         for time in times:
-            select_lecture_room_widget = SelectLectureRoomWidget(time, lecture["locations"])
+            select_lecture_room_widget = SelectLectureRoomWidget(lecture_type, time, lecture["locations"])
             layout.addWidget(select_lecture_room_widget)
 
         # Gets the weeks the class is held
@@ -61,3 +63,39 @@ class GetCourseDetailsWidget(QWidget):
             return "1 lecture in a week"
 
         return f"{frequency} lectures in a week"
+
+    def get_lectures(self) -> list[Lecture]:
+        """
+        Get the lectures from the widgets
+
+        :return: list[Lecture]
+        """
+        lectures = []
+        name = self.course["name"]
+        code = self.course["code"]
+
+        for lecture_widget in self.findChildren(QWidget):
+            if isinstance(lecture_widget, SelectLectureRoomWidget):
+                lecture_type, time, location = lecture_widget.get_lecture_times_and_location()
+
+                lecture = Lecture(name, code, lecture_type, location, self.find_location_name(location), time["day"],
+                                  time["start"],
+                                  time["end"])
+                lectures.append(lecture)
+
+        return lectures
+
+    def find_location_name(self, location_code: str) -> str:
+        """
+        Find the location name from the location code
+
+        :param location_code:
+        :return:
+        """
+
+        for lecture in self.course["classes"]:
+            for location in lecture["locations"]:
+                if location["code"] == location_code:
+                    return location["name"]
+
+        return "Unknown Location"
