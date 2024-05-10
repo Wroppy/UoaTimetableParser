@@ -7,6 +7,8 @@ from TimetableToJson import TimetableToJson
 
 
 class SetTimeTableDetailsWidget(QWidget):
+    timetable_configured = pyqtSignal(dict)
+
     def __init__(self):
         super().__init__()
         self.lectures = 0
@@ -31,7 +33,7 @@ class SetTimeTableDetailsWidget(QWidget):
 
         self.next_button = QPushButton("Loading...")
         self.next_button.setDisabled(True)
-        self.next_button.clicked.connect(self.go_to_next_lecture)
+        self.next_button.clicked.connect(self.button_clicked)
 
         layout.addWidget(self.next_button)
 
@@ -69,11 +71,24 @@ class SetTimeTableDetailsWidget(QWidget):
 
         :return:
         """
+
         self.lectures += 1
         self.lecture_stacked_widget.setCurrentIndex(self.lectures)
 
-        if self.lectures == self.lecture_stacked_widget.count() - 1:
-            self.disable_button()
+    def button_clicked(self):
+        """
+        Called when the next button is clicked, will either go to the next lecture or emit the signal that the user has
+        finished setting the timetable details
+        :return:
+        """
+
+        if self.lectures < self.lecture_stacked_widget.count() - 1:
+            self.go_to_next_lecture()
+        else:
+            self.timetable_configured.emit(self.get_timetable_details())
+
+    def get_timetable_details(self) -> dict:
+        return {"hello": "world"}
 
     def clear_stack(self):
         """

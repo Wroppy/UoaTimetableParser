@@ -20,6 +20,7 @@ class TimetableFormatter(QWidget):
         # layout.addWidget(timetable_getter)
 
         timetable_parser_widget = SetTimeTableDetailsWidget()
+        timetable_parser_widget.timetable_configured.connect(print)
 
         layout.addWidget(timetable_parser_widget)
         timetable_parser_widget.parse_timetable("data/timetable.html")
