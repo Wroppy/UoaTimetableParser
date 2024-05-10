@@ -63,7 +63,6 @@ class GetUserTimetable(QWidget):
         """
 
         timetable = self.preview_html_text_edit.toPlainText()
-        print(timetable)
 
         if not timetable or not self.file_path:
             return

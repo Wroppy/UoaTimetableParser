@@ -8,27 +8,28 @@ from TimetableToIcalProgram.get_user_timetable import GetUserTimetable
 from TimetableToIcalProgram.set_timetable_details_widget import SetTimeTableDetailsWidget
 
 
-class TimetableFormatter(QWidget):
+class TimetableFormatter(QStackedWidget):
     def __init__(self):
         super().__init__(parent=None)
         self.set_widgets()
 
     def set_widgets(self):
-        layout = QVBoxLayout(self)
+        timetable_getter = GetUserTimetable()
+        timetable_getter.parse_timetable.connect(self.parse_timetable)
+        self.addWidget(timetable_getter)
 
-        # timetable_getter = GetUserTimetable()
-        # timetable_getter.parse_timetable.connect(self.parse_timetable)
-        # layout.addWidget(timetable_getter)
+        self.timetable_parser_widget = SetTimeTableDetailsWidget()
+        self.timetable_parser_widget.timetable_configured.connect(self.timetable_configured)
 
-        # timetable_parser_widget = SetTimeTableDetailsWidget()
-        # timetable_parser_widget.timetable_configured.connect(print)
-        #
-        # layout.addWidget(timetable_parser_widget)
-        # timetable_parser_widget.parse_timetable("data/timetable.html")
+        self.addWidget(self.timetable_parser_widget)
 
         download_ical_widget = DownloadIcalWidget()
-        layout.addWidget(download_ical_widget)
+        self.addWidget(download_ical_widget)
 
-    def parse_timetable(self, timetable: BeautifulSoup):
-        print("Timetable parsed!")
-        print(timetable)
+    def timetable_configured(self):
+        self.setCurrentIndex(2)
+
+    def parse_timetable(self, timetable: str):
+        self.timetable_parser_widget.parse_timetable(timetable)
+        self.setCurrentIndex(1)
+
