@@ -20,39 +20,36 @@ class GetCourseDetailsWidget(QWidget):
         name = self.course["name"]
         code = self.course["code"]
 
-        heading = QLabel("Configure your class times and locations")
+        heading = QLabel("Configure your lecture times and locations")
         self.name_label = QLabel(f"Course: {code}, {name}")
 
         layout.addWidget(heading)
         layout.addWidget(self.name_label)
 
-        self.classes_layout = QVBoxLayout()
+        self.lectures_layout = QVBoxLayout()
 
-        for class_ in self.course["classes"]:
-            self.classes_layout.addWidget(self.get_class_widget(class_))
+        for lecture in self.course["classes"]:
+            self.lectures_layout.addWidget(self.get_lecture_widget(lecture))
 
-        layout.addLayout(self.classes_layout)
+        layout.addLayout(self.lectures_layout)
 
-    def get_class_widget(self, class_: dict):
-        class_widget = QWidget()
-        layout = QVBoxLayout(class_widget)
+    def get_lecture_widget(self, lecture: dict):
+        lecture_widget = QWidget()
+        layout = QVBoxLayout(lecture_widget)
 
-        class_type = class_["type"]
+        lecture_type = lecture["type"]
 
-        layout.addWidget(QLabel(f"Class Type: {class_type}, {self.get_class_frequency_text(class_)}"))
+        layout.addWidget(QLabel(f"Class Type: {lecture_type}, {self.get_lecture_frequency_text(lecture)}"))
 
         # Gets the weeks the class is held
-        weeks_widget = GetLectureWeeksWidget(class_)
+        weeks_widget = GetLectureWeeksWidget(lecture)
         layout.addWidget(weeks_widget)
 
-        return class_widget
+        return lecture_widget
 
-    def get_class_frequency_text(self, class_: dict):
+    def get_lecture_frequency_text(self, class_: dict):
         frequency = len(class_['times'])
         if frequency == 1:
-            return "1 class in a week"
+            return "1 lecture in a week"
 
-        return f"{frequency} classes in a week"
-
-    def get_lecture_widget(self, class_: dict):
-        pass
+        return f"{frequency} lectures in a week"
