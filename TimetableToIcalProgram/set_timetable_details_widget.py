@@ -9,14 +9,14 @@ from TimetableToJson import TimetableToJson
 class SetTimeTableDetailsWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.classes = 0
+        self.lectures = 0
 
         self.create_widgets()
 
     def create_widgets(self):
         layout = QVBoxLayout(self)
 
-        self.classStack = QStackedWidget()
+        self.lecture_stacked_widget = QStackedWidget()
 
         loading_widget = QWidget()
         loading_layout = QVBoxLayout(loading_widget)
@@ -25,13 +25,13 @@ class SetTimeTableDetailsWidget(QWidget):
 
         loading_layout.addWidget(loading_label)
 
-        self.classStack.addWidget(loading_widget)
+        self.lecture_stacked_widget.addWidget(loading_widget)
 
-        layout.addWidget(self.classStack)
+        layout.addWidget(self.lecture_stacked_widget)
 
         self.next_button = QPushButton("Loading...")
         self.next_button.setDisabled(True)
-        self.next_button.clicked.connect(self.go_to_next_class)
+        self.next_button.clicked.connect(self.go_to_next_lecture)
 
         layout.addWidget(self.next_button)
 
@@ -47,11 +47,11 @@ class SetTimeTableDetailsWidget(QWidget):
             scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
             scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
 
-            self.classStack.addWidget(scroll_area)
+            self.lecture_stacked_widget.addWidget(scroll_area)
 
     def parse_timetable(self, file_path: str):
         """
-        Parse the timetable html file and display the classes in the stack
+        Parse the timetable html file and display the lectures in the stack
 
         :param file_path:
         :return:
@@ -63,16 +63,16 @@ class SetTimeTableDetailsWidget(QWidget):
 
         self.update_widget(timetable)
 
-    def go_to_next_class(self):
+    def go_to_next_lecture(self):
         """
-        Go to the next class in the stack
+        Go to the next lecture in the stack
 
         :return:
         """
-        self.classes += 1
-        self.classStack.setCurrentIndex(self.classes)
+        self.lectures += 1
+        self.lecture_stacked_widget.setCurrentIndex(self.lectures)
 
-        if self.classes == self.classStack.count() - 1:
+        if self.lectures == self.lecture_stacked_widget.count() - 1:
             self.disable_button()
 
     def clear_stack(self):
@@ -82,11 +82,11 @@ class SetTimeTableDetailsWidget(QWidget):
         :return: None
         """
 
-        self.classes = 0
-        self.classStack.setCurrentIndex(0)
+        self.lectures = 0
+        self.lecture_stacked_widget.setCurrentIndex(0)
 
-        for i in range(1, self.classStack.count()):
-            self.classStack.removeWidget(self.classStack.widget(i))
+        for i in range(1, self.lecture_stacked_widget.count()):
+            self.lecture_stacked_widget.removeWidget(self.lecture_stacked_widget.widget(i))
 
     def enable_button(self):
         self.next_button.setDisabled(False)

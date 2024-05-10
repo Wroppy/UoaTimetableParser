@@ -2,7 +2,7 @@ from PyQt6.QtWidgets import *
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
-from TimetableToIcalProgram.get_class_weeks_widget import GetClassWeeksWidget
+from TimetableToIcalProgram.get_lecture_weeks_widget import GetLectureWeeksWidget
 
 
 class GetCourseDetailsWidget(QWidget):
@@ -42,7 +42,7 @@ class GetCourseDetailsWidget(QWidget):
         layout.addWidget(QLabel(f"Class Type: {class_type}, {self.get_class_frequency_text(class_)}"))
 
         # Gets the weeks the class is held
-        weeks_widget = GetClassWeeksWidget(class_)
+        weeks_widget = GetLectureWeeksWidget(class_)
         layout.addWidget(weeks_widget)
 
         return class_widget

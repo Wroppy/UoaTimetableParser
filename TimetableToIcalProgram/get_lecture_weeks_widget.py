@@ -3,13 +3,13 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 
 
-class GetClassWeeksWidget(QWidget):
+class GetLectureWeeksWidget(QWidget):
 
-    def __init__(self, class_: dict):
+    def __init__(self, lecture: dict):
         super().__init__()
         self.checkboxes = []
 
-        self.class_ = class_
+        self.lecture = lecture
 
         self.create_widgets()
 
@@ -18,7 +18,7 @@ class GetClassWeeksWidget(QWidget):
 
         self.weeks_layout = QVBoxLayout()
 
-        select_week_label = QLabel("Select week when the class is on")
+        select_week_label = QLabel("Select week when the lecture is on")
         layout.addWidget(select_week_label)
 
         # Select all checkbox
