@@ -7,11 +7,12 @@ from TimetableToJson import TimetableToJson
 
 
 class SetTimeTableDetailsWidget(QWidget):
-    timetable_configured = pyqtSignal(dict)
+    timetable_configured = pyqtSignal(list)
 
     def __init__(self):
         super().__init__()
         self.lectures = 0
+        self.course_widgets: list[GetCourseDetailsWidget] = []
 
         self.create_widgets()
 
@@ -38,9 +39,10 @@ class SetTimeTableDetailsWidget(QWidget):
         layout.addWidget(self.next_button)
 
     def update_widget(self, timetable: dict):
-
+        self.course_widgets = []
         for course in timetable:
             course_widget = GetCourseDetailsWidget(course)
+            self.course_widgets.append(course_widget)
 
             # Scroll area so the checkboxes don't take up the whole screen
             scroll_area = QScrollArea()
@@ -88,7 +90,12 @@ class SetTimeTableDetailsWidget(QWidget):
             self.timetable_configured.emit(self.get_timetable_details())
 
     def get_timetable_details(self) -> dict:
-        return {"hello": "world"}
+
+        for course_widget in self.course_widgets:
+            course_widget.get_lectures()
+
+
+        return []
 
     def clear_stack(self):
         """
