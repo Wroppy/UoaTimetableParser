@@ -3,6 +3,7 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from bs4 import BeautifulSoup
 
+from TimetableToIcalProgram.download_ical_widget import DownloadIcalWidget
 from TimetableToIcalProgram.get_user_timetable import GetUserTimetable
 from TimetableToIcalProgram.set_timetable_details_widget import SetTimeTableDetailsWidget
 
@@ -19,11 +20,14 @@ class TimetableFormatter(QWidget):
         # timetable_getter.parse_timetable.connect(self.parse_timetable)
         # layout.addWidget(timetable_getter)
 
-        timetable_parser_widget = SetTimeTableDetailsWidget()
-        timetable_parser_widget.timetable_configured.connect(print)
+        # timetable_parser_widget = SetTimeTableDetailsWidget()
+        # timetable_parser_widget.timetable_configured.connect(print)
+        #
+        # layout.addWidget(timetable_parser_widget)
+        # timetable_parser_widget.parse_timetable("data/timetable.html")
 
-        layout.addWidget(timetable_parser_widget)
-        timetable_parser_widget.parse_timetable("data/timetable.html")
+        download_ical_widget = DownloadIcalWidget()
+        layout.addWidget(download_ical_widget)
 
     def parse_timetable(self, timetable: BeautifulSoup):
         print("Timetable parsed!")
