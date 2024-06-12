@@ -52,8 +52,8 @@ class GetCourseDetailsWidget(QWidget):
             layout.addWidget(select_lecture_room_widget)
 
         # Gets the weeks the class is held
-        weeks_widget = GetLectureWeeksWidget(lecture)
-        layout.addWidget(weeks_widget)
+        self.weeks_widget = GetLectureWeeksWidget(lecture)
+        layout.addWidget(self.weeks_widget)
 
         return lecture_widget
 
@@ -78,10 +78,11 @@ class GetCourseDetailsWidget(QWidget):
             if isinstance(lecture_widget, SelectLectureRoomWidget):
                 lecture_type, time, location = lecture_widget.get_lecture_times_and_location()
 
-                lecture = Lecture(name, code, lecture_type, location, self.find_location_name(location), time["day"],
-                                  time["start"],
-                                  time["end"])
-                lectures.append(lecture)
+                for week in self.weeks_widget.get_weeks():
+                    lecture = Lecture(name, code, lecture_type, location, self.find_location_name(location),
+                                      time["day"],
+                                      time["start"], time["end"], week)
+                    lectures.append(lecture)
 
         return lectures
 

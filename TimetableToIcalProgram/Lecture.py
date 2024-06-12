@@ -14,3 +14,4 @@ class Lecture:
     day: str
     start_time: str
     end_time: str
+    week: int

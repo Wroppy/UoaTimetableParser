@@ -3,9 +3,11 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from bs4 import BeautifulSoup
 
+from TimetableToIcalProgram.Lecture import Lecture
 from TimetableToIcalProgram.download_ical_widget import DownloadIcalWidget
 from TimetableToIcalProgram.get_user_timetable import GetUserTimetable
 from TimetableToIcalProgram.set_timetable_details_widget import SetTimeTableDetailsWidget
+from icalendar import Calendar, Event, vCalAddress, vText
 
 
 class TimetableFormatter(QStackedWidget):
@@ -26,10 +28,10 @@ class TimetableFormatter(QStackedWidget):
         download_ical_widget = DownloadIcalWidget()
         self.addWidget(download_ical_widget)
 
-    def timetable_configured(self):
+    def timetable_configured(self, lectures: list[Lecture]):
         self.setCurrentIndex(2)
+        print(lectures)
 
     def parse_timetable(self, timetable: str):
         self.timetable_parser_widget.parse_timetable(timetable)
         self.setCurrentIndex(1)
-

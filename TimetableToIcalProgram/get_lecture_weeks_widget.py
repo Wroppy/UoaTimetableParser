@@ -73,3 +73,16 @@ class GetLectureWeeksWidget(QWidget):
         self.checkboxes.append(checkbox)
 
         return week_widget
+
+    def get_weeks(self) -> list[int]:
+        """
+        Get the weeks that the lecture is on
+
+        :return: list[int]
+        """
+        weeks = []
+        for index, checkbox in enumerate(self.checkboxes):
+            if checkbox.isChecked():
+                weeks.append(index + 1)
+
+        return weeks
